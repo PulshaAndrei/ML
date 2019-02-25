@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+	<input id="input" type="number" onchange="onChnageFunc()" />
+	<p id="demo"></p>
+
+<script>
+	const onChnageFunc = () => {
+		var x = document.getElementById("input").value;
+  		document.getElementById("demo").innerHTML = "Predicted price for the accomodation: " + predict(lr, x);
+	}
+
+	const linearRegression = (x, y) => {
+	    var xs = 0;  // sum(x)
+	    var ys = 0;  // sum(y)
+	    var xxs = 0; // sum(x*x)
+	    var xys = 0; // sum(x*y)
+	    var yys = 0; // sum(y*y)
+
+	    var n = 0;
+	    for (; n < x.length && n < y.length; n++) {
+	        xs += x[n];
+	        ys += y[n];
+	        xxs += x[n] * x[n];
+	        xys += x[n] * y[n];
+	        yys += y[n] * y[n];
+	    }
+
+	    var div = n * xxs - xs * xs;
+	    var a = (n * xys - xs * ys) / div;
+	    var b = (ys * xxs - xs * xys) / div;
+	    var correlation = Math.abs((xys * n - xs * ys) / Math.sqrt((xxs * n - xs * xs) * (yys * n - ys * ys)));
+
+	    return { a, b };
+	}
+
+	const predict = (lr, x) => {
+		return Math.round((x*lr.a + lr.b) * 100) / 100;
+	}
+
+	const error = (y, y1) => {
+		return Math.round(Math.abs(y - y1) / y * 100) / 100;
+	}
+
+	const array_x = [18, 20, 32, 40, 19, 50, 26, 40, 28, 34, 56, 18, 20, 16, 25];
+	const array_y = [350, 480, 700, 820, 280, 1200, 580, 800, 570, 720, 1500, 280, 420, 300, 520 ];
+
+	const lr = linearRegression(array_x, array_y);
+	console.log('y = x * ', lr.a, ' + ', lr.b);
+	for (var i = 0; i < array_y.length; i++) {
+		const res = predict(lr, array_x[i])
+		console.log(array_x[i], array_y[i], res, error(array_y[i], res));
+	}
+</script>
+
+</body>
+</html>
